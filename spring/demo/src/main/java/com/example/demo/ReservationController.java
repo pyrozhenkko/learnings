@@ -1,9 +1,8 @@
 package com.example.demo;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -20,17 +19,31 @@ public class ReservationController {
     }
 
     @GetMapping("/{id}")
-    public Reservation getReservationById(
+    public ResponseEntity<Reservation> getReservationById(
             @PathVariable("id") Long id
     ) {
         logger.info("Getting reservation with id " + id);
-        return reservationService.getReservationById(id);
+        return ResponseEntity.status(HttpStatus.CREATED).
+                body(reservationService.getReservationById(id));
+        //return reservationService.getReservationById(id);
     }
 
     @GetMapping()
-    public List<Reservation> getAllReservations(){
-        System.out.println("log called method");
-        return reservationService.findAllReservations();
+    public ResponseEntity<List<Reservation>> getAllReservations(){
+        logger.info("Getting all reservations");
+        return ResponseEntity.ok(reservationService.findAllReservations());
+        //return reservationService.findAllReservations();
+    }
+
+    @PostMapping()
+    public ResponseEntity<Reservation> createReservation(
+            @RequestBody Reservation reservationToCreate
+    ) {
+        logger.info("Creating reservation " + reservationToCreate);
+        return ResponseEntity.status(201)
+                .header("test-header", "123")
+                .body(reservationService.createReservation(reservationToCreate));
+        //return reservationService.createReservation(reservationToCreate);
     }
 
 }
