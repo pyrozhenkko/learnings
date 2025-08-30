@@ -59,11 +59,16 @@ public class ReservationController {
             @PathVariable("id") Long id,
             @RequestBody Reservation reservationToUpdate
     ){
+
         logger.info("Updating reservation " + reservationToUpdate);
+
         var updated = reservationService.updateReservation(id, reservationToUpdate);
         return ResponseEntity.ok((Reservation) updated);// якась дурня
     }
-    @DeleteMapping
+
+
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReservation(
             @PathVariable("id") Long id
     ){
@@ -74,6 +79,14 @@ public class ReservationController {
         } catch (NoSuchElementException e){
             return ResponseEntity.status(404).build();
         }
+    }
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<Reservation> approveReservation(
+          @PathVariable Long id
+    ){
+        logger.info("Approving reservation, id = " + id);
+        var reservation = reservationService.approveReservation(id);
+        return ResponseEntity.ok(reservation);
     }
 
 }

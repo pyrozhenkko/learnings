@@ -5,12 +5,14 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.logging.Logger;
 
 
 @Service
 public class ReservationService {
     private final Map<Long, Reservation> reservationMap;
     private final AtomicLong idCounter;
+    private final static Logger logger = Logger.getLogger(ReservationService.class.getName());
 
     public ReservationService() {
         reservationMap = new HashMap<>();
@@ -51,14 +53,76 @@ public class ReservationService {
             Long id,
             Reservation reservationToUpdate
     ) {
-        return null;
+        if(!reservationMap.containsKey(id)) {
+            throw new NoSuchElementException("Not found reservation with id = " + id);
+        }
+        var reservation = reservationMap.get(id);
+        if (reservation.status() != ReservationStatus.PENDING) {
+            throw new IllegalStateException("reservation status is not PENDING, current status is " + reservation.status());
+        }
+        var updatedReservation = new Reservation(
+                reservation.id(),
+                reservationToUpdate.userId(),
+                reservationToUpdate.roomId(),
+                reservationToUpdate.startDate(),
+                reservationToUpdate.endDate(),
+                ReservationStatus.PENDING
+        );
+        reservationMap.put(reservation.id(), updatedReservation);
+        return updatedReservation;
     }
 
     public void deleteReservation(Long id) {
         if(!reservationMap.containsKey(id)) {
+            logger.info("Not found reservation with id = " + id);
             throw new NoSuchElementException("Not found reservation with id " + id);
         }
         reservationMap.remove(id);
 
+    }
+
+    public Reservation approveReservation(Long id) {
+        if(!reservationMap.containsKey(id)) {
+            throw new NoSuchElementException("Not found reservation with id " + id);
+        }
+        var reservation = reservationMap.get(id);
+        if (reservation.status() != ReservationStatus.PENDING) {
+            throw new IllegalStateException("reservation status is not PENDING, cannot approve reservation");
+        }
+        var isConflict =  isReservationConflict(reservation);
+        if(isConflict) {
+            throw new IllegalStateException("Cannot approve reservation because of conflict");
+        }
+        var  approvedReservation = new Reservation(
+                reservation.id(),
+                reservation.userId(),
+                reservation.roomId(),
+                reservation.startDate(),
+                reservation.endDate(),
+                ReservationStatus.APPROVED
+        );
+        reservationMap.put(reservation.id(), approvedReservation);
+        return approvedReservation;
+    }
+
+    private boolean isReservationConflict(Reservation reservation) {
+        for (Reservation existing : reservationMap.values()) {
+            if (existing.id().equals(reservation.id())) {
+                continue; // пропускаємо саму себе
+            }
+            if (!Objects.equals(existing.roomId(), reservation.roomId())) {
+                continue; // інша кімната — нас не цікавить
+            }
+            if (existing.status() != ReservationStatus.APPROVED) {
+                continue; // конфліктуємо лише з уже підтвердженими
+            }
+
+            // Перетин дат: (start < other.end) && (other.start < end)
+            if (reservation.startDate().isBefore(existing.endDate()) &&
+                    existing.startDate().isBefore(reservation.endDate())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
