@@ -12,9 +12,12 @@ import java.util.logging.Logger;
 public class ReservationService {
     private final Map<Long, Reservation> reservationMap;
     private final AtomicLong idCounter;
+    private final ReservationRepository repository;
+
     private final static Logger logger = Logger.getLogger(ReservationService.class.getName());
 
-    public ReservationService() {
+    public ReservationService(ReservationRepository repository) {
+        this.repository = repository;
         reservationMap = new HashMap<>();
         idCounter = new AtomicLong();
     }
@@ -27,7 +30,20 @@ public class ReservationService {
     }
 
     public List<Reservation> findAllReservations() {
-        return reservationMap.values().stream().toList();
+        List<ReservationEntity> allEntities = repository.findAll();
+        List<Reservation> reservationList = allEntities.stream()
+                .map(it ->
+                    new Reservation(
+                            it.getId(),
+                            it.getUserId(),
+                            it.getRoomID(),
+                            it.getStartDate(),
+                            it.getEndDate(),
+                            it.getStatus()
+                    )
+                ).toList();
+
+        return reservationList;
     }
 
     public Reservation createReservation(Reservation reservationToCreate) {
