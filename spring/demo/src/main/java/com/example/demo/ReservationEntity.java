@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
-@Table(name = "reservations")
 @Entity
+@Table(name = "reservations")
 public class ReservationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,6 +19,7 @@ public class ReservationEntity {
     private LocalDate startDate;
     @Column(name = "end_date")
     private LocalDate endDate;
+    @Enumerated(EnumType.STRING)
     @Column(name = "status")
     private ReservationStatus status;
 
