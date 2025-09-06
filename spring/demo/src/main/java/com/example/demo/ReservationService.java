@@ -1,6 +1,8 @@
 package com.example.demo;
 
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -12,6 +14,7 @@ import java.util.logging.Logger;
 @Service
 public class ReservationService {
 
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(ReservationService.class);
     private final ReservationRepository repository;
 
     private final static Logger logger = Logger.getLogger(ReservationService.class.getName());
@@ -21,6 +24,8 @@ public class ReservationService {
     }
 
     public Reservation getReservationById(Long id) {
+
+        repository.findAllByStatusIs(ReservationStatus.APPROVED);
         ReservationEntity reservationEntity =  repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Not found reservation by id = " + id
@@ -81,12 +86,15 @@ public class ReservationService {
         return toDomainReservation(updatedReservation);
     }
 
-    public void deleteReservation(Long id) {
+    @Transactional
+    public void cancelReservation(Long id) {
 
         if(!repository.existsById(id)) {
             throw new EntityNotFoundException("Not found reservation with id = " + id);
         }
-        repository.deleteById(id);
+        repository.setStatus(id, ReservationStatus.CANCELLED);
+
+        log.info("reservation with id = " + id +    "successfully cancelled");
 
     }
 

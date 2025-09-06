@@ -14,7 +14,7 @@ public class ReservationEntity {
     @Column(name = "user_id")
     private Long userId;
     @Column(name = "room_id")
-    private Long roomID;
+    private Long roomId;
     @Column(name = "start_date")
     private LocalDate startDate;
     @Column(name = "end_date")
@@ -28,7 +28,7 @@ public class ReservationEntity {
     public ReservationEntity(Long id, Long userId, Long roomID, LocalDate startDate, LocalDate endDate, ReservationStatus status) {
         this.id = id;
         this.userId = userId;
-        this.roomID = roomID;
+        this.roomId = roomID;
         this.startDate = startDate;
         this.endDate = endDate;
         this.status = status;
@@ -51,11 +51,11 @@ public class ReservationEntity {
     }
 
     public Long getRoomID() {
-        return roomID;
+        return roomId;
     }
 
     public void setRoomID(Long roomID) {
-        this.roomID = roomID;
+        this.roomId = roomID;
     }
 
     public LocalDate getStartDate() {
