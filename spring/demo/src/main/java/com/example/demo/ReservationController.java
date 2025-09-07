@@ -25,14 +25,10 @@ public class ReservationController {
             @PathVariable("id") Long id
     ) {
         logger.info("Getting reservation with id " + id);
-        try {
             return ResponseEntity.status(HttpStatus.CREATED).
                     body(reservationService.getReservationById(id));
             //return reservationService.getReservationById(id);
-        }catch (NoSuchElementException e) {
-            logger.info("Reservation not found");
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+
 
     }
 
@@ -73,13 +69,11 @@ public class ReservationController {
             @PathVariable("id") Long id
 
     ){
-        try{
             logger.info("Deleting reservation ");
             reservationService.cancelReservation(id);
             return ResponseEntity.ok().build();
-        } catch (NoSuchElementException e){
-            return ResponseEntity.status(404).build();
-        }
+
+
     }
     @PostMapping("/{id}/approve")
     public ResponseEntity<Reservation> approveReservation(

@@ -48,6 +48,9 @@ public class ReservationService {
         if (reservationToCreate.status() != null) {
             throw new IllegalArgumentException("status is already set (should be empty)");
         }
+//        if(reservationToCreate.roomId().equals(10L)) {
+//            throw new RuntimeException("test exception");
+//        }
 
         var entityToSave = new ReservationEntity(
                 null,
