@@ -52,14 +52,12 @@ public class GlobalExceptionHandler {
                 .body(errorDto);
     }
 
-    @ExceptionHandler(exception = {
+    @ExceptionHandler({
             IllegalArgumentException.class,
             IllegalStateException.class,
-            MethodArgumentNotValidException.class,
+            MethodArgumentNotValidException.class
     })
-    public ResponseEntity<ErrorResponseDto> handleEBadRequest(
-            IllegalArgumentException e
-    ){
+    public ResponseEntity<ErrorResponseDto> handleEBadRequest(Exception e) {
         log.error("Handling BadRequest", e);
 
         var errorDto = new ErrorResponseDto(
@@ -72,4 +70,5 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(errorDto);
     }
+
 }
