@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ import java.util.logging.Logger;
 public class ReservationController {
 
     private static final Logger logger = Logger.getLogger(ReservationController.class.getName());
- 
+
     private final ReservationService reservationService;
 
     public ReservationController(ReservationService reservationService) {
@@ -41,7 +42,7 @@ public class ReservationController {
 
     @PostMapping
     public ResponseEntity<Reservation> createReservation(
-            @RequestBody Reservation reservationToCreate
+            @RequestBody @Valid Reservation reservationToCreate
     ) {
         logger.info("Creating reservation " + reservationToCreate);
         return ResponseEntity.status(201)
@@ -53,7 +54,7 @@ public class ReservationController {
     @PutMapping("/{id}")
     public ResponseEntity<Reservation> updateReservation(
             @PathVariable("id") Long id,
-            @RequestBody Reservation reservationToUpdate
+            @RequestBody @Valid Reservation reservationToUpdate
     ){
 
         logger.info("Updating reservation " + reservationToUpdate);
