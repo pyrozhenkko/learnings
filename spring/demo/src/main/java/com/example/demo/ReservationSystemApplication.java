@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.util.TimeZone;
 
 @SpringBootApplication
-public class DemoApplication {
+public class ReservationSystemApplication {
 
 	public static void main(String[] args) {
 		// Спочатку налаштовуємо часовий пояс
@@ -14,6 +14,6 @@ public class DemoApplication {
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 
 		// ПОТІМ запускаємо Spring
-		SpringApplication.run(DemoApplication.class, args);
+		SpringApplication.run(ReservationSystemApplication.class, args);
 	}
 }

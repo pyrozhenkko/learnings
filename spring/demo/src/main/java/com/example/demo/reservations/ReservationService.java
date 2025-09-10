@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.reservations;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.logging.Logger;
 
 
@@ -122,7 +121,12 @@ public class ReservationService {
         if (reservationEntity.getStatus() != ReservationStatus.PENDING) {
             throw new IllegalStateException("reservation status is not PENDING, cannot approve reservation");
         }
-        var isConflict =  isReservationConflict(reservationEntity);
+        var isConflict =  isReservationConflict(
+                reservationEntity.getRoomID(),
+                reservationEntity.getStartDate(),
+                reservationEntity.getEndDate()
+
+        );
         if(isConflict) {
             throw new IllegalStateException("Cannot approve reservation because of conflict");
         }
@@ -131,37 +135,22 @@ public class ReservationService {
         return toDomainReservation(reservationEntity);
     }
 
-    private boolean isReservationConflict(ReservationEntity reservation) {
-        var allReservations = repository.findAll();
-        for (ReservationEntity existingReservation : allReservations) {
-            if (reservation.getId().equals(existingReservation.getId())) {
-                continue; // пропускаємо саму себе
-            }
-            if (!reservation.getRoomID().equals(existingReservation.getRoomID())) {
-                continue; // інша кімната — нас не цікавить
-            }
-            if (!existingReservation.getStatus().equals(ReservationStatus.APPROVED)) {
-                continue; // конфліктуємо лише з уже підтвердженими
-            }
-
-            // Перетин дат: (start < other.end) && (other.start < end)
-            if (reservation.getStartDate().isBefore(existingReservation.getEndDate()) &&
-                    existingReservation.getStartDate().isBefore(reservation.getEndDate())) {
-                return true;
-            }
-        }
-        return false;
-    }
-    private Reservation  toDomainReservation(
-            ReservationEntity reservation
-    ){
-        return new Reservation(
-                reservation.getId(),
-                reservation.getUserId(),
-                reservation.getRoomID(),
-                reservation.getStartDate(),
-                reservation.getEndDate(),
-                reservation.getStatus()
+    private boolean isReservationConflict(
+            Long roomId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        List<Long> conflictIds = repository.findConflictReservationIds(
+                roomId,
+                startDate,
+                endDate,
+                ReservationStatus.APPROVED
         );
+        if(conflictIds.isEmpty()) {
+            return false;
+        }
+        log.info("Conflicting with ids = {}" + conflictIds);
+        return true;
     }
+
 }

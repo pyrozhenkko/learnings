@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.reservations;
 
 import jakarta.persistence.*;
 
@@ -20,7 +20,7 @@ public class ReservationEntity {
     @Column(name = "end_date", nullable = false)
     private LocalDate endDate;
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false )
     private ReservationStatus status;
 
     public ReservationEntity() {}

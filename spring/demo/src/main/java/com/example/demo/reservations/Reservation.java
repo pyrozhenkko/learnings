@@ -1,12 +1,10 @@
-package com.example.demo;
+package com.example.demo.reservations;
 
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Null;
 import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public record Reservation(
         @Null

@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.reservations;
 
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -49,5 +49,19 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     void setStatus(
             @Param("id") Long id,
             @Param("status") ReservationStatus reservationStatus
+    );
+    @Transactional
+    @Query("""
+            select r.id from ReservationEntity r
+            where r.roomId = :roomId 
+            and :startDate < r.endDate
+            and :endDate > r.startDate
+            and r.status = :status
+            """)
+    List<Long> findConflictReservationIds(
+            @Param("roomId") Long roomId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param(":status") ReservationStatus status
     );
 }
