@@ -1,13 +1,14 @@
 package com.example.demo.reservations;
 
-import com.example.demo.reservations.availability.ReservationAvailabilityService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.logging.Logger;
 
 
 @Service
@@ -17,15 +18,10 @@ public class ReservationService {
     private final ReservationRepository repository;
     private final ReservationMapper mapper;
 
-    private final ReservationAvailabilityService availabilityService;
 
-
-
-
-    public ReservationService(ReservationRepository repository, ReservationMapper mapper, ReservationAvailabilityService availabilityService) {
+    public ReservationService(ReservationRepository repository, ReservationMapper mapper) {
         this.repository = repository;
         this.mapper = mapper;
-        this.availabilityService = availabilityService;
     }
 
     public Reservation getReservationById(Long id) {
@@ -116,13 +112,13 @@ public class ReservationService {
         if (reservationEntity.getStatus() != ReservationStatus.PENDING) {
             throw new IllegalStateException("reservation status is not PENDING, cannot approve reservation");
         }
-        var isAvailableToApprove = availabilityService.isReservationAvailable(
+        var isConflict =  isReservationConflict(
                 reservationEntity.getRoomID(),
                 reservationEntity.getStartDate(),
                 reservationEntity.getEndDate()
 
         );
-        if(!isAvailableToApprove) {
+        if(isConflict) {
             throw new IllegalStateException("Cannot approve reservation because of conflict");
         }
         reservationEntity.setStatus(ReservationStatus.APPROVED);
@@ -130,7 +126,23 @@ public class ReservationService {
         return mapper.toDomain(reservationEntity);
     }
 
-
+    private boolean isReservationConflict(
+            Long roomId,
+            LocalDate startDate,
+            LocalDate endDate
+    ) {
+        List<Long> conflictIds = repository.findConflictReservationIds(
+                roomId,
+                startDate,
+                endDate,
+                ReservationStatus.APPROVED
+        );
+        if(conflictIds.isEmpty()) {
+            return false;
+        }
+        log.info("Conflicting with ids = {}" + conflictIds);
+        return true;
+    }
 
     public List<Reservation> searchAllByFilter(ReservationSearchFilter filter) {
 

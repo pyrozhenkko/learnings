@@ -9,26 +9,26 @@ import java.util.stream.Stream;
 public class Main {
     public static void main(String[] args) {
 
-        int maxCounter = 0;
-        int temp = 0;
+        Stream.of(1,2,3,4,5,7,3,4,5,7,6)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+                .entrySet().stream();
 
         int[] numbers = {5,5,5,4,5,4,7,4,2,3,4,2,4,5,3,2,2};
-        for(int i = 0; i < numbers.length; i++) {
-            int counter = 0;
-
-            for(int j = i+1; j < numbers.length; j++) {
-                if(numbers[i] == numbers[j]) {
-                    counter++;
-                    if(counter > maxCounter) {
-                        maxCounter = counter;
-                        temp = numbers[i];
-                    }
-                }
-            }
-
-
-        }
-        System.out.println(temp);
+        int maxCount= 0;
+        int finalValue = 0;
+       for (int i = 0; i < numbers.length; i++) {
+           int count = 0;
+           for (int j = 0; j < numbers.length; j++) {
+               if (numbers[i] == numbers[j]) {
+                   count++;
+               }
+           }
+           if (count >= maxCount) {
+               maxCount = count;
+               finalValue = numbers[i];
+           }
+       }
+       System.out.println(finalValue);
 
     }
 }
