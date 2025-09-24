@@ -21,6 +21,5 @@ public class ProductController {
 
     @PostMapping("/product/create")
     public String createProduct(Product product){
-
     }
 }
