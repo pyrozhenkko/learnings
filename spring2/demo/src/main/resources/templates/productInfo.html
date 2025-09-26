@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BUYSELL</title>
+</head>
+<body>
+<h1> Hello, BUYSELL! </h1>
+<h4>Детальна інформація про товар</h4>
+<b>Назва товара:</b>${product.title}<br>
+<b>Ціна:</b>${product.price}<br>
+<b>Місто:</b>${product.city}<br>
+<b>Автор:</b>${product.author}<br>
+
+<hr>
+<h3>
+    Створити новий товар
+</h3>
+<form action="/product/delete/${product.id}" method="post">
+    <input type="submit" value="Видалити товар">
+</form>
+</body>
+</html>
