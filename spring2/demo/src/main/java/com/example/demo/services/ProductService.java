@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.models.Product;
+import com.example.demo.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,14 +9,22 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@Slf4j
 public class ProductService {
+    private final ProductRepository productRepository;
     private List<Product> products = new ArrayList<>();
-    private long ID = 0;
-    {
-        products.add(new Product(ID++,"PlayStation 5", "Simple description", 30000, "City1", "Author1"));
-        products.add(new Product(ID++,"Iphone 5", "Simple description", 5000, "City2", "Author2"));
 
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
     }
+
+    public List <Product> listProducts(String title) {
+        List<Product> products = productRepository.findByTitle(title);
+        if (title != null) productRepository.findByTitle(title);
+
+        return productRepository.findAll();
+    }
+
     public List<Product> getProducts(){
         return products;
     }
