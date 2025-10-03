@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
-@Slf4j
 public class ProductService {
     private final ProductRepository productRepository;
     private List<Product> products = new ArrayList<>();
@@ -28,7 +27,6 @@ public class ProductService {
     public List<Product> getProducts(){
         return products;
     }
-
     public Product getProductById(Long id){
         for (Product product : products) {
             if(product.getId().equals(id)){
@@ -38,7 +36,6 @@ public class ProductService {
         throw new NoSuchElementException("Product with id " + id + " not found");
     }
     public void addProduct(Product product){
-        product.setId(ID++);
         products.add(product);
     }
     public void deleteProduct(Long id){

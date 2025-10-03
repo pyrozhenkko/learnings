@@ -1,11 +1,9 @@
 package com.example.demo.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "products")
-@Data
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -32,6 +30,10 @@ public class Product {
        this.price = price;
        this.city = city;
        this.author = author;
+    }
+
+    public Product() {
+
     }
 
     public Long getId() {
