@@ -19,6 +19,7 @@ public class ProductService {
     public List<Product> getProducts(){
         return products;
     }
+
     public Product getProductById(Long id){
         for (Product product : products) {
             if(product.getId().equals(id)){
