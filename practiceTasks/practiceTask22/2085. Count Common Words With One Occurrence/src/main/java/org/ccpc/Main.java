@@ -17,7 +17,7 @@ class Solution{
 
         for (int  i = 0; i < words1.length; i++) {
             if(map.containsKey(words1[i])){
-                map.put(wordsсьв1[i],map.get(words1[i])+1);
+                map.put(words1[i],map.get(words1[i])+1);
             }
             else{
                 map.put(words1[i],1);
