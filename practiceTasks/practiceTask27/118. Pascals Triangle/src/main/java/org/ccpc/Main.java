@@ -1,17 +1,42 @@
 package org.ccpc;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import java.util.ArrayList;
+import java.util.List;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello 2000(Linus)!");
+        Solution s = new Solution();
+        System.out.println(s.generate(5));
+    }
+}
 
-        for (int i = 1; i <= 5; i++) {
-            //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-            // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-            System.out.println("i = " + i);
+class Solution {
+    public List<List<Integer>> generate(int numRows) {
+        List<List<Integer>> triangle = new ArrayList<>();
+
+        if (numRows == 0) return triangle;
+
+        // перший ряд
+        List<Integer> firstRow = new ArrayList<>();
+        firstRow.add(1);
+        triangle.add(firstRow);
+
+        // наступні ряди
+        for (int i = 1; i < numRows; i++) {
+            List<Integer> prevRow = triangle.get(i - 1);
+            List<Integer> row = new ArrayList<>();
+
+            row.add(1); // перший елемент
+
+            for (int j = 1; j < prevRow.size(); j++) {
+                row.add(prevRow.get(j - 1) + prevRow.get(j)); // середина
+            }
+
+            row.add(1); // останній елемент
+
+            triangle.add(row);
         }
+
+        return triangle;
     }
 }
