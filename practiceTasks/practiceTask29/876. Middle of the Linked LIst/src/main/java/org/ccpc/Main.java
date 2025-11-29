@@ -7,7 +7,7 @@ class ListNode{
     public ListNode(int val){
         this.val = val;
     }
-} 
+}
 
 public class Main {
     public static void main(String[] args) {
